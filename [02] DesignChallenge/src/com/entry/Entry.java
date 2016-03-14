@@ -9,4 +9,5 @@ public abstract class Entry {
 	private String description;
 	private Color color;
 	private boolean isCompleted;
+	private Date dateDue;
 }
