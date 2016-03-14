@@ -1,13 +1,18 @@
 package com.controller;
 
+import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Date;
 
 import com.model.Model;
 
 public abstract class Controller {
-
-	private ArrayList<Model> models;
+	protected ArrayList<Model> models;
 	
-	public abstract void getEntries(Date date);
+	public abstract ArrayList<Entry> getEntries(Date date);
+	public abstract ArrayList<Entry> getEntries(Date date, EntryType type);
+	
+	public abstract void addEntries(EntryType tyoe, String description, Date dateDue, Time startTime, Time endTime);
+	public abstract boolean isValidEntry(Date date, TimeRange timeRange);
+	public abstract void removeEntries(Entry entry);
+
 }
