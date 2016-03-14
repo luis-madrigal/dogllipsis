@@ -14,5 +14,13 @@ public abstract class Controller {
 	public abstract void addEntries(EntryType type, String description, Date dateDue, Time startTime, Time endTime);
 	public abstract boolean isValidEntry(Date date, TimeRange timeRange);
 	public abstract void removeEntries(Entry entry);
+	
+	public ArrayList<Model> getModels() {
+		return models;
+	}
+	public void setModels(ArrayList<Model> models) {
+		this.models = models;
+	}
+
 
 }
