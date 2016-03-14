@@ -2,7 +2,6 @@ package com.view;
 
 import com.controller.Controller;
 
-public abstract class View {
+public abstract class ProductivityToolController extends Controller{
 
-	protected Controller controller;
 }
