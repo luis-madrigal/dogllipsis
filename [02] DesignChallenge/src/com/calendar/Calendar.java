@@ -15,8 +15,8 @@ public class Calendar {
 	private int yearToday;
 	private int monthToday;
 	private int minYear;
-	String[] headers;
-	String[] months;
+	private String[] headers;
+	private String[] months;
 	public Calendar(){
 
 		this.years = new ArrayList<CalYear>();		
@@ -59,6 +59,62 @@ public class Calendar {
 		}
 		//TODO New Z
 		refreshCalendar(this.monthToday, this.yearToday);
+	}
+	
+	public Year[] getYear() {
+		return year;
+	}
+
+	public void setYear(Year[] year) {
+		this.year = year;
+	}
+
+	public int getYearBound() {
+		return yearBound;
+	}
+
+	public void setYearBound(int yearBound) {
+		this.yearBound = yearBound;
+	}
+
+	public int getDayBound() {
+		return dayBound;
+	}
+
+	public void setDayBound(int dayBound) {
+		this.dayBound = dayBound;
+	}
+
+	public int getMonthToday() {
+		return monthToday;
+	}
+
+	public void setMonthToday(int monthToday) {
+		this.monthToday = monthToday;
+	}
+
+	public int getMinYear() {
+		return minYear;
+	}
+
+	public void setMinYear(int minYear) {
+		this.minYear = minYear;
+	}
+
+	public String[] getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(String[] headers) {
+		this.headers = headers;
+	}
+
+	public String[] getMonths() {
+		return months;
+	}
+
+	public void setMonths(String[] months) {
+		this.months = months;
 	}
 
 }
