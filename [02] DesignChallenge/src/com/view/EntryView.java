@@ -10,4 +10,18 @@ public abstract class EntryView extends View{
 	public abstract void viewEvents();
 	public abstract void viewAll();
 	public abstract void viewNone();
+	
+	public ArrayList<Entry> getEntries() {
+		return entries;
+	}
+	public void setEntries(ArrayList<Entry> entries) {
+		this.entries = entries;
+	}
+	public EntryType[] getType() {
+		return type;
+	}
+	public void setType(EntryType[] type) {
+		this.type = type;
+	}
+	
 }
