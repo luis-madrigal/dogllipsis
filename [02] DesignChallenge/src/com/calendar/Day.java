@@ -8,5 +8,5 @@ public class Day {
 
 	private int day;
 	private ArrayList<Entry> entries;
-	private boolean timeslots[];
+	private boolean[] timeslots;
 }
