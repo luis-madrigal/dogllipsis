@@ -4,6 +4,6 @@ import com.controller.Controller;
 
 public abstract class View {
 	
-	private Controller controller;
+	protected Controller controller;
 
 }
