@@ -11,7 +11,7 @@ public abstract class Controller {
 	public abstract ArrayList<Entry> getEntries(Date date);
 	public abstract ArrayList<Entry> getEntries(Date date, EntryType type);
 	
-	public abstract void addEntries(EntryType tyoe, String description, Date dateDue, Time startTime, Time endTime);
+	public abstract void addEntries(EntryType type, String description, Date dateDue, Time startTime, Time endTime);
 	public abstract boolean isValidEntry(Date date, TimeRange timeRange);
 	public abstract void removeEntries(Entry entry);
 
