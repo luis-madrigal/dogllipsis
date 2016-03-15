@@ -98,14 +98,31 @@ public class ProductivityToolModel extends Model {
 
 	@Override
 	public void ExportFile(String fileName, ArrayList<Entry> entries) {
-		// TODO Auto-generated method stub
-		
+		ExportCsv export = new ExportCsv();
+		export.generate("entries", entries);
 	}
 	
 	@Override
 	public void importFile(JFrame baseFrame) {
-		// TODO Auto-generated method stub
+		ArrayList<Entry> importedEntries = new ArrayList<Entry>();
+		try {	
+			ImportFile fileHandler = null;
+			String ext = this.handler.openFile(baseFrame);
+			if(ext == "")
+				;
+			else {
+				fileHandler = new FileHandlerCSV();
+				fileHandler.importFile(new File(ext));	
+				importedEntries = fileHandler.entries;
+			}
+						
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
+		for(int i = 0; i < importedEntries.size(); i++) {
+			this.getEntries(importedEntries.get(i).getDateDue()).add(importedEntries.get(i));
+		}
 	}
 
 	
