@@ -6,6 +6,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -24,13 +25,15 @@ public class FrameAgenda extends Frame implements MouseListener, MouseMotionList
 	private ProductivityToolController controller;
 	private AgendaView viewAgenda;
 	
-	private JLabel lblFrameMain;
+	private JLabel lblFrameMain;	
 	private ArrayList<Entry> entries;
-	private ArrayList<JCheckBox> cbStatus;
+	private ArrayList<AgendaEntry> entryLabels;
+	private int entryIndex;
+	
 	private JLabel lblEntriesBg;
 	private JPanel pnlEntries;
 	private JScrollPane scrlEntries;
-
+	
 	public FrameAgenda(int width, int height, AgendaView viewAgenda, ProductivityToolController controller) {
 		super(width, height);
 		this.controller = controller;
@@ -44,7 +47,12 @@ public class FrameAgenda extends Frame implements MouseListener, MouseMotionList
 	
 	@Override
 	protected void initComponents() {		
-		this.cbStatus = new ArrayList<JCheckBox>();
+		this.entries = new ArrayList<Entry>();
+		this.entryLabels = new ArrayList<AgendaEntry>();
+		
+		this.entryIndex = 0;
+		
+		this.entries = controller.getEntries(new Date());
 		
 		this.lblFrameMain = new JLabel();
 		this.lblEntriesBg = new JLabel();
@@ -119,10 +127,13 @@ public class FrameAgenda extends Frame implements MouseListener, MouseMotionList
 		// TODO Auto-generated method stub
 		
 	}
-	public void refresh(int month, int day, int year) {
-		// TODO Auto-generated method stub
+	
+	public void update(Entry entry) {
 		
-	}	
+		this.entryLabels.add(new AgendaEntry(entry, this.entryIndex));
+		this.entryIndex++;
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		
@@ -183,5 +194,5 @@ public class FrameAgenda extends Frame implements MouseListener, MouseMotionList
 			this.repaint();
 			this.revalidate();
 		}
-	}
+	}	
 }
