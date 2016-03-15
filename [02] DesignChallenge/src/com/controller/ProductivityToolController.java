@@ -24,8 +24,10 @@ public class ProductivityToolController extends Controller{
 	}
 
 	@Override
-	public void addEntries(EntryType type, String description, java.sql.Date dateDue, Time startTime, Time endTime) {
+	public void addEntries(EntryType type, String description, Date dateDue, Time startTime, Time endTime) {
 		// TODO Auto-generated method stub
+		this.models.get(0).addEntries(type, description, dateDue, startTime, endTime);
+		//TODO: Renew view
 		
 	}
 
@@ -38,7 +40,8 @@ public class ProductivityToolController extends Controller{
 	@Override
 	public void removeEntries(Entry entry) {
 		// TODO Auto-generated method stub
-		
+		this.models.remove(entry);
+		// TODO Renew view
 	}
 
 }
