@@ -126,7 +126,7 @@ public class FrameCalendar extends Frame implements MouseListener {
 		for(int i=0; i<rows; i++){
 			for(int j=0; j<cols; j++){
 				this.btnDay[j][i].setText("");
-				if(day>= noOfDays){
+				if(day> noOfDays){
 					startDays=false;
 				}
 				if(startDays==true){
