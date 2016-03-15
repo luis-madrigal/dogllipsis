@@ -42,8 +42,6 @@ public class FrameCalendar extends Frame implements MouseListener {
 		this.currentMonth = this.cal.get(GregorianCalendar.MONTH);
 		this.currentYear = this.cal.get(GregorianCalendar.YEAR);
 		
-//		this.cal.get
-		
 		this.initComponents();
 		
 		this.add(btnNext);
@@ -121,7 +119,7 @@ public class FrameCalendar extends Frame implements MouseListener {
 		
 		YearMonth yearMonth = YearMonth.of(this.currentYear, this.currentMonth+1);		
 		int noOfDays = yearMonth.lengthOfMonth(); //29
-		int startOfMonth = this.cal.get(GregorianCalendar.DAY_OF_WEEK_IN_MONTH); // kaya di nagpapalit kasi yung month today parati nakukuha niya
+		int startOfMonth = new GregorianCalendar(currentYear, currentMonth, 1).get(GregorianCalendar.DAY_OF_WEEK);
 		
 		int day = 1;
 		boolean startDays = false;
@@ -129,6 +127,7 @@ public class FrameCalendar extends Frame implements MouseListener {
 		
 		for(int i=0; i<rows; i++){
 			for(int j=0; j<cols; j++){
+				this.btnDay[j][i].setText("");
 				if(day>= noOfDays){
 					startDays=false;
 				}
