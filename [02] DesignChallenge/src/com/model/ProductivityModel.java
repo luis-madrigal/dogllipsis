@@ -91,17 +91,17 @@ public class ProductivityToolModel extends Model {
 	}
 
 	@Override
-	public void ExportFile(String fileName, ArrayList<Entry> entries) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void removeEntries(Entry entry) {
 		// TODO Auto-generated method stub
 		this.getEntries(entry.getDateDue()).remove(entry);
 	}
 
+	@Override
+	public void ExportFile(String fileName, ArrayList<Entry> entries) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void importFile(JFrame baseFrame) {
 		// TODO Auto-generated method stub
