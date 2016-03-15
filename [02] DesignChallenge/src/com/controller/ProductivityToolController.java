@@ -6,19 +6,24 @@ import java.util.Date;
 
 import com.calendar.TimeRange;
 import com.entry.Entry;
-import com.entry.EntryType;
+import com.model.Model;
+import com.model.ProductivityToolModel;
+import com.view.EntryType;
 
 public class ProductivityToolController extends Controller{
 
-
-	@Override
-	public ArrayList<Entry> getEntries(java.sql.Date date) {
-		// TODO Auto-generated method stub
-		return null;
+	public ProductivityToolController() {
+		this.models = new ArrayList<Model>();
+		this.models.add(new ProductivityToolModel());
 	}
 
 	@Override
-	public ArrayList<Entry> getEntries(java.sql.Date date, EntryType type) {
+	public ArrayList<Entry> getEntries(Date date) {
+		return this.models.get(0).getEntries(date);
+	}
+
+	@Override
+	public ArrayList<Entry> getEntries(Date date, EntryType type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -32,7 +37,7 @@ public class ProductivityToolController extends Controller{
 	}
 
 	@Override
-	public boolean isValidEntry(java.sql.Date date, TimeRange timeRange) {
+	public boolean isValidEntry(Date date, TimeRange timeRange) {
 		// TODO Auto-generated method stub
 		return false;
 	}
