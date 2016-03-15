@@ -76,16 +76,9 @@ public class ProductivityToolModel extends Model {
 	public void addEntries(EntryType type, String description, Date dateDue,
 			Time startTime, Time endTime) {
 		// TODO Auto-generated method stub
-		switch(type){
-			case EVENT:
-				this.getEntries(dateDue, type).add(EntryFactory.createEntry(type, description, dateDue, startTime, endTime));
-				break;
-			case TASK:
-				this.getEntries(dateDue, type).add(EntryFactory.createEntry(type, description, dateDue, startTime, endTime));
-				break;
-		}	
+		this.getEntries(dateDue, type).add(EntryFactory.createEntry(type, description, dateDue, startTime, endTime));
 	}
-
+	
 	@Override
 	public boolean isValidEntry(Date date, TimeRange timeRange) {
 		// TODO Auto-generated method stub
