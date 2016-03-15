@@ -1,5 +1,3 @@
-// Di pa nagpapalit yung mga days pag nagne-next or prev, see LINE 124
-
 package com.gui;
 
 import java.awt.event.MouseEvent;
