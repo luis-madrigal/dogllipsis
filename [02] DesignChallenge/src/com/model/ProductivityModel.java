@@ -76,12 +76,17 @@ public class ProductivityToolModel extends Model {
 	public void addEntries(EntryType type, String description, Date dateDue,
 			Time startTime, Time endTime) {
 		// TODO Auto-generated method stub
-		this.getEntries(dateDue, type).add(EntryFactory.createEntry(type, description, dateDue, startTime, endTime));
+		if(isValidEntry(dateDue, new TimeRange(startTime, endTime)))
+			this.getEntries(dateDue, type).add(EntryFactory.createEntry(type, description, dateDue, startTime, endTime));
+		else
+			System.out.println("Not valid Entry");
 	}
 	
 	@Override
 	public boolean isValidEntry(Date date, TimeRange timeRange) {
 		// TODO Auto-generated method stub
+		if(this.getEntries(date).contains(timeRange))
+			return true;
 		return false;
 	}
 
