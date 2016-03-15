@@ -1,4 +1,4 @@
-package com.model;
+package com.gui;
 
 import java.io.File;
 
