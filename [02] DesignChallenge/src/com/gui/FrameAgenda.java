@@ -128,6 +128,11 @@ public class FrameAgenda extends Frame implements MouseListener, MouseMotionList
 		
 	}
 	
+	public void refresh(int month, int day, int year) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void update(Entry entry) {
 		
 		this.entryLabels.add(new AgendaEntry(entry, this.entryIndex));
