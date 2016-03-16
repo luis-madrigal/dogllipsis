@@ -27,7 +27,6 @@ public class Handler {
 	}
 	//TODO Added this for the preloading
 	public void openFile(String path) throws IOException {
-		//this.getEventsFromFile(new File(path));
 		FileHandlerCSV handlerCsv = new FileHandlerCSV();
 		handlerCsv.importFile(new File(path));
 		this.entries = handlerCsv.getEntries();
