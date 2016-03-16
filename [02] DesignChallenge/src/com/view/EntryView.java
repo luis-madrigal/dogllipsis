@@ -2,6 +2,8 @@ package com.view;
 
 import java.util.ArrayList;
 
+import com.entry.Entry;
+
 public abstract class EntryView extends View{
 	protected ArrayList<Entry> entries;
 	protected EntryType[] type;
@@ -23,5 +25,4 @@ public abstract class EntryView extends View{
 	public void setType(EntryType[] type) {
 		this.type = type;
 	}
-	
 }
