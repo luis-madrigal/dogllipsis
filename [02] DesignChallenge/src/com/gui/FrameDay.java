@@ -17,12 +17,10 @@ import javax.swing.ScrollPaneConstants;
 
 import com.controller.ProductivityToolController;
 import com.entry.Entry;
-import com.entry.EntryFactory;
 import com.entry.Event;
 import com.entry.Task;
 import com.view.DayView;
 import com.view.EntryType;
-import com.view.EntryView;
 
 public class FrameDay extends Frame implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
@@ -52,12 +50,10 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	private JLabel lblPosterMain;
 	private JButton btnRemove;
 	
-	// 3 labels of time slots 00:00
 	private JLabel lblLeftTime;
 	private JLabel lblMainTime;
 	private JLabel lblRightTime;
 	
-	// Main poster labels
 	private JLabel lblTimeDue;
 	private JLabel lblEntryNum;
 	private JTextArea txtDescription;
@@ -75,42 +71,34 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	private ImageIcon iiMainTask;
 	private ImageIcon iiMainTaskTail;
 	private ImageIcon iiSideTask;
-
 	
 	public FrameDay(int width, int height, ProductivityToolController controller) {
 		super(width, height);
-		this.controller = controller;
+		this.controller = controller;		
+		this.viewDay = new DayView(controller);
 		
-		this.viewDay = new DayView();
 		this.initComponents();
-		this.setViewType(EntryType.NONE);
-		// frame
-		this.add(lblFrameMain);
-		this.add(lblFrameSide);
 		
+		this.add(lblFrameMain);
+		this.add(lblFrameSide);		
 		this.add(btnRemove);
-		// done highlight
 		this.add(lblPosterMainDone);
 		this.add(lblPosterSideLeftDone);
-		this.add(lblPosterSideRightDone);
-		
-		// poster details
+		this.add(lblPosterSideRightDone);		
 		this.add(lblMainTime);
 		this.add(lblTimeDue);
 		this.add(lblEntryNum);
 		this.add(scrlDescription);
-		
 		this.add(lblLeftTime);
 		this.add(lblRightTime);
-		
-		// poster
 		this.add(lblPosterMain);
 		this.add(lblPosterSideLeft);
 		this.add(lblPosterSideRight);
 		
+		this.setViewType(EntryType.NONE);
 		this.setTime();
 	}
-	
+
 	@Override
 	protected void initComponents() {		
 		this.indexYear = 2016;
@@ -120,57 +108,7 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		this.isSelectedTask = true;
 		
 		this.time = new ArrayList<String>();
-		time.add("00:00");
-		time.add("00:30");
-		time.add("01:00");
-		time.add("01:30");
-		time.add("02:00");
-		time.add("02:30");
-		time.add("03:00");
-		time.add("03:30");
-		time.add("04:00");
-		time.add("04:30");
-		time.add("05:00");
-		time.add("05:30");
-		
-		time.add("06:00");
-		time.add("06:30");
-		time.add("07:00");
-		time.add("07:30");
-		time.add("08:00");
-		time.add("08:30");
-		time.add("09:00");
-		time.add("09:30");
-		time.add("10:00");
-		time.add("10:30");
-		time.add("11:00");
-		time.add("11:30");
-		
-		time.add("12:00");
-		time.add("12:30");
-		time.add("13:00");
-		time.add("13:30");
-		time.add("14:00");
-		time.add("14:30");
-		time.add("15:00");
-		time.add("15:30");
-		time.add("16:00");
-		time.add("16:30");
-		time.add("17:00");
-		time.add("17:30");
-		
-		time.add("18:00");
-		time.add("18:30");		
-		time.add("19:00");
-		time.add("19:30");
-		time.add("20:00");
-		time.add("20:30");
-		time.add("21:00");
-		time.add("21:30");
-		time.add("22:00");
-		time.add("22:30");
-		time.add("23:00");
-		time.add("23:30");
+		this.initTimeLabels();
 		
 		
 		this.entries = new ArrayList<Entry>();
@@ -303,8 +241,7 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 			this.lblRightTime.setText(""+this.time.get((this.indexEntry+1)));
 			
 		}
-		this.setPoster();
-		this.setPosterSide();
+		this.refresh();
 	}
 	
 	public void setPoster() {
@@ -470,6 +407,8 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	public void refresh() {
 		this.refresh(this.indexMonth, this.indexDay, this.indexYear);		
 	}
+	
+	@SuppressWarnings("deprecation")
 	public void refresh(int month, int day, int year) {
 		System.out.println("month: "+month+"   day: "+day+"   year"+year);
 		this.indexDay = day;
@@ -499,10 +438,9 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 			System.out.println("i = "+i+"    entry: "+entries.get(i));
 		}
 		
-		
-		this.setPoster();
-		
+		this.setPoster();	
 	}
+	
 	public void next() {
 		this.setIndexEntry(this.indexEntry+1);
 	}
@@ -516,6 +454,7 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		this.refresh();
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void markPoster() {
 		if(this.entries.size() > 0) {
 			Date date = new Date(this.indexYear-1900, this.indexMonth, this.indexDay);
@@ -525,13 +464,11 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 				System.out.println("task");
 				int indexStart = Application.getTimeIndex(entry.getTimeRange().getStartTime());
 				int indexEnd = Application.getTimeIndex(entry.getTimeRange().getEndTime());
-				int index = this.controller.getEntries(date).indexOf(entry);
 				for(int i = indexStart; i < indexEnd; i++) {
 					this.controller.getEntries(date).get(i).setCompleted(!this.controller.getEntries(date).get(i).isCompleted());
 					System.out.println("Completed: "+this.controller.getEntries(date).get(i).isCompleted());
 				}
 			}
-	//		this.entries = this.controller.getEntries(date);
 			this.refresh();
 		}
 	}
@@ -565,7 +502,6 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		
 	}
 
 	@Override
@@ -905,5 +841,59 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 
 	public void setIiSideTask(ImageIcon iiSideTask) {
 		this.iiSideTask = iiSideTask;
+	}
+	
+	private void initTimeLabels() {
+		time.add("00:00");
+		time.add("00:30");
+		time.add("01:00");
+		time.add("01:30");
+		time.add("02:00");
+		time.add("02:30");
+		time.add("03:00");
+		time.add("03:30");
+		time.add("04:00");
+		time.add("04:30");
+		time.add("05:00");
+		time.add("05:30");
+		
+		time.add("06:00");
+		time.add("06:30");
+		time.add("07:00");
+		time.add("07:30");
+		time.add("08:00");
+		time.add("08:30");
+		time.add("09:00");
+		time.add("09:30");
+		time.add("10:00");
+		time.add("10:30");
+		time.add("11:00");
+		time.add("11:30");
+		
+		time.add("12:00");
+		time.add("12:30");
+		time.add("13:00");
+		time.add("13:30");
+		time.add("14:00");
+		time.add("14:30");
+		time.add("15:00");
+		time.add("15:30");
+		time.add("16:00");
+		time.add("16:30");
+		time.add("17:00");
+		time.add("17:30");
+		
+		time.add("18:00");
+		time.add("18:30");		
+		time.add("19:00");
+		time.add("19:30");
+		time.add("20:00");
+		time.add("20:30");
+		time.add("21:00");
+		time.add("21:30");
+		time.add("22:00");
+		time.add("22:30");
+		time.add("23:00");
+		time.add("23:30");
 	}
 }
