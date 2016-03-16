@@ -2,15 +2,11 @@ package com.gui;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-
 import com.view.CalendarView;
 
 public class FrameCalendar extends Frame implements MouseListener {
@@ -27,11 +23,13 @@ public class FrameCalendar extends Frame implements MouseListener {
 	
 	private JLabel[] lblCalendarDay; 
 	private JButton[][] btnDay;	
+	private JLabel lblSelectedBtn;
 	
 	private GregorianCalendar cal;
 	private String[] month = {"January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private int currentDay;
 	private int currentMonth;
+	private int selectedMonth;
 	private int currentYear;
 	private int rows = 6;
 	private int cols = 7;
@@ -39,18 +37,20 @@ public class FrameCalendar extends Frame implements MouseListener {
 	public FrameCalendar(int width, int height, Application frmParent) {
 		super(width, height);
 		this.frmParent = frmParent;
-//		this.viewCalendar = viewCalendar;
 		
 		this.cal = new GregorianCalendar();
 		this.currentDay = this.cal.get(GregorianCalendar.DAY_OF_MONTH);
 		this.currentMonth = this.cal.get(GregorianCalendar.MONTH);
+		this.selectedMonth = currentMonth;
 		this.currentYear = this.cal.get(GregorianCalendar.YEAR);
 		
 		this.initComponents();
 		
+		
 		this.add(btnNext);
 		this.add(btnPrev);
 		
+		this.add(lblSelectedBtn);
 		this.add(lblCalendarMonth);
 		this.add(lblCalendarYear);		
 		this.add(lblCalendarBg);
@@ -58,7 +58,12 @@ public class FrameCalendar extends Frame implements MouseListener {
 
 	@Override
 	protected void initComponents() {
-	
+		this.viewCalendar = new CalendarView();
+		
+		this.lblSelectedBtn = new JLabel();
+		Frame.initLabels(lblSelectedBtn, "btnDay_on", null);
+		lblSelectedBtn.setBounds(150, 150, lblSelectedBtn.getWidth(), lblSelectedBtn.getHeight());
+		
 		this.lblCalendarBg = new JLabel();
 		this.lblCalendarMonth = new JLabel(this.month[this.currentMonth]);
 		this.lblCalendarYear = new JLabel(String.valueOf(this.currentYear));
@@ -164,6 +169,9 @@ public class FrameCalendar extends Frame implements MouseListener {
 					startDays=true;
 					day++;
 				}
+				if(day == currentDay+1) {
+					this.lblSelectedBtn.setBounds(this.btnDay[j][i].getBounds());
+				}
 			}
 		}
 		this.repaint();
@@ -188,16 +196,26 @@ public class FrameCalendar extends Frame implements MouseListener {
 				}
 				else
 					this.currentMonth = 0;
-			}
-			
+			}			
 			else{
 				this.currentMonth--;
 			}
+			
+			// TODO
+			if(this.currentMonth == this.selectedMonth) {
+				this.lblSelectedBtn.setVisible(true);
+			}
+			else {
+				this.lblSelectedBtn.setVisible(false);
+			}
+			// TODO
+			
 			this.lblCalendarMonth.setText(this.month[this.currentMonth]);
 			this.lblCalendarYear.setText(String.valueOf(this.currentYear));
 			this.refresh();
 		}
 		else if(e.getSource().equals(this.btnNext)){
+			
 			if(this.currentMonth==11){
 				if(this.currentYear < this.cal.get(GregorianCalendar.YEAR)+100){
 					this.currentYear++;
@@ -209,19 +227,29 @@ public class FrameCalendar extends Frame implements MouseListener {
 			else{
 				this.currentMonth++;
 			}
+			
+			// TODO
+			if(this.currentMonth == this.selectedMonth) {
+				this.lblSelectedBtn.setVisible(true);
+			}
+			else {
+				this.lblSelectedBtn.setVisible(false);
+			}
+			// TODO
+			
 			this.lblCalendarMonth.setText(this.month[this.currentMonth]);
 			this.lblCalendarYear.setText(String.valueOf(this.currentYear));
 			this.refresh();
 		}
 		else if(e.getSource() instanceof JButton) {
-			System.out.println("ins");
-			
+			this.lblSelectedBtn.setBounds(((JButton)e.getComponent()).getBounds());
+			this.selectedMonth = this.currentMonth;
+			this.lblSelectedBtn.setVisible(true); //TODO
 			this.currentDay = Integer.parseInt(((JButton)e.getComponent()).getText());
 			this.frmParent.refresh(this.currentMonth, this.currentDay, this.currentYear);
-			System.out.println("Date set: "+this.currentDay);
 		}
 	}
-
+	
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	
