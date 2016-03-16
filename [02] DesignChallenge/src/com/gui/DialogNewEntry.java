@@ -1,8 +1,6 @@
 package com.gui;
 
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -10,7 +8,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.sql.Time;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -25,7 +22,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.calendar.TimeRange;
-import com.entry.EntryFactory;
 import com.view.EntryType;
 
 public class DialogNewEntry extends JDialog implements ChangeListener, MouseListener, MouseMotionListener, MouseWheelListener {
@@ -41,7 +37,6 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 	private JLabel lblDate;
 	
 	private JTextArea txtDescription;
-//	private JScrollPane scrlDescription;
 	private JComboBox<Time> cmbTimeStart;
 	private JComboBox<Time> cmbTimeEnd;
 	
@@ -71,7 +66,6 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 		this.initComponents();
 		this.setSize(this.lblDialogBg.getSize());
 		this.setModal(true);
-//		this.setBounds(1366/2-(this.getWidth()/2), 768/2-(this.getHeight()/2), this.getWidth(), this.getHeight());
 		this.setBounds(562, 290, this.getWidth(), this.getHeight());
 
 		this.add(btnCreate);
@@ -87,6 +81,7 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 		this.add(lblDialogBg);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void initComponents() {
 		Date date = new Date();
 		String strYear = date.toString().substring(date.toString().length()-4, date.toString().length());
@@ -110,23 +105,7 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 		txtDescription.setBorder(null);
 		txtDescription.setMargin(new Insets(7, 7, 7, 7));
 		txtDescription.setLineWrap(true);
-		
-//		this.scrlDescription = new JScrollPane(txtDescription);		
-//		scrlDescription.setBounds(txtDescription.getBounds());
-//		scrlDescription.setBackground(txtDescription.getBackground());
-//		scrlDescription.setOpaque(false);
-//		scrlDescription.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-//		scrlDescription.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-//		scrlDescription.getVerticalScrollBar().setUI(new CustomScrollBarUI());
-//		scrlDescription.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
-//		scrlDescription.setBorder(null);
-//		scrlDescription.getComponent(0).addMouseMotionListener(this);
-//		scrlDescription.getComponent(1).addMouseMotionListener(this);
-//		scrlDescription.getComponent(2).addMouseMotionListener(this);
-//		scrlDescription.getComponent(0).addMouseWheelListener(this);
-//		scrlDescription.getComponent(1).addMouseWheelListener(this);
-//		scrlDescription.getComponent(2).addMouseWheelListener(this);
-		
+
 		this.cmbTimeStart = new JComboBox<Time>();
 		cmbTimeStart.setBackground(Application.Color_BEIGE);
 		cmbTimeStart.setForeground(Application.Color_NIGHT);
@@ -217,10 +196,12 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 		btnCreate.setBounds(24, 240, btnCreate.getWidth(), btnCreate.getHeight());
 	}
 	
-	public void open(int month, int day, int year) {
+	public void open(int month, int day, int year, int index) {
 		this.currentMonth = month;
 		this.currentDay = day;
 		this.currentYear = year;
+		this.cmbTimeStart.setSelectedIndex(index);
+		this.cmbTimeEnd.setSelectedIndex(index+1);
 		this.lblDate.setText(convertToMonth(month)+" "+day+", "+year);
 		this.setVisible(true);
 	}
@@ -250,7 +231,8 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 		}
 	}
 	
-	// TODO add overlap check & earlier end than start/vice-versa
+	
+	@SuppressWarnings("deprecation")
 	public void create() {
 		System.out.println("time start: "+cmbTimeStart.getSelectedItem());
 		System.out.println("time end: "+cmbTimeEnd.getSelectedItem());
