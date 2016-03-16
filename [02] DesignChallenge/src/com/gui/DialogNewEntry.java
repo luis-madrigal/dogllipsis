@@ -9,6 +9,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.sql.Time;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -22,9 +24,14 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.calendar.TimeRange;
+import com.entry.EntryFactory;
+import com.view.EntryType;
+
 public class DialogNewEntry extends JDialog implements ChangeListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 
+	private Application frmParent;
 	private JLabel lblDialogBg;
 	
 	private JButton btnCreate;
@@ -46,7 +53,11 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 	private JTextField txtTimeEnd;
 	private JTextField txtDate;
 	
-	public DialogNewEntry() {	
+	private int currentMonth;
+	private int currentDay;
+	private int currentYear;
+	
+	public DialogNewEntry(Application frmParent) {	
 		this.setLayout(null);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
@@ -56,6 +67,7 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);	
 		this.setBackground(Application.Color_TRANS);
 		
+		this.frmParent = frmParent;
 		this.initComponents();
 		this.setSize(this.lblDialogBg.getSize());
 		this.setModal(true);
@@ -76,6 +88,14 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 	}
 	
 	public void initComponents() {
+		Date date = new Date();
+		String strYear = date.toString().substring(date.toString().length()-4, date.toString().length());
+		int year = Integer.parseInt(strYear);	
+//		GregorianCalendar calendar = new GregorianCalendar(year, date.getMonth(), date.getDate());	
+		this.currentMonth = date.getMonth();
+		this.currentDay = date.getDate();
+		this.currentYear = year;
+		
 		this.lblDialogBg = new JLabel();
 		lblDialogBg.setIcon(new ImageIcon("images/Dialog NewEntryBg.png"));
 		lblDialogBg.setSize(lblDialogBg.getIcon().getIconWidth(), lblDialogBg.getIcon().getIconHeight());
@@ -197,12 +217,73 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 		btnCreate.setBounds(24, 240, btnCreate.getWidth(), btnCreate.getHeight());
 	}
 	
+	public void open(int month, int day, int year) {
+		this.currentMonth = month;
+		this.currentDay = day;
+		this.currentYear = year;
+		this.lblDate.setText(convertToMonth(month)+" "+day+", "+year);
+		this.setVisible(true);
+	}
+	
 	public void close() {
+		this.frmParent.refresh(this.currentMonth, this.currentDay, this.currentYear);
+		this.txtDescription.setText("description");
 		this.setVisible(false);
 		
 	}
+	
+	public String convertToMonth(int month) {
+		switch(month) {
+		case 0: return "January";
+		case 1: return "February";
+		case 2: return "March";
+		case 3: return "April";
+		case 4: return "May";
+		case 5: return "June";
+		case 6: return "July";
+		case 7: return "August";
+		case 8: return "September";
+		case 9: return "October";
+		case 10: return "November";
+		case 11: return "December";
+		default: return "";
+		}
+	}
+	
+	// TODO add overlap check & earlier end than start/vice-versa
+	public void create() {
+		System.out.println("time start: "+cmbTimeStart.getSelectedItem());
+		System.out.println("time end: "+cmbTimeEnd.getSelectedItem());
+		
+		EntryType type;
+		if(this.rdiEvent.isSelected())
+			type = EntryType.EVENT;
+		else
+			type = EntryType.TASK;
+		
+		Date date = new Date(this.currentYear-1900, this.currentMonth, this.currentDay);
+		TimeRange timeRange= new TimeRange((Time)cmbTimeStart.getSelectedItem(), (Time)cmbTimeEnd.getSelectedItem());
+		System.out.println("added to date: "+date);
+		
+		if(frmParent.getController().isValidEntry(date, timeRange)) {
+			frmParent.getController().addEntries(type, txtDescription.getText(),date, (Time)cmbTimeStart.getSelectedItem(), (Time)cmbTimeEnd.getSelectedItem());
+			this.close();
+		}
+		else {
+			invalid();
+		}
+	}
+	
+	public void invalid() {
+		lblTitle.setText("ERROR: Invalid Time Range");
+		this.repaint();		
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if(e.getSource() == this.btnCreate) {
+			this.create();			
+		}
 		if(e.getSource() == this.btnCancel) {
 			this.close();
 		}
@@ -224,26 +305,20 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
+	public void mouseReleased(MouseEvent e) {
 		
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void mouseDragged(MouseEvent e) {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void mouseMoved(MouseEvent e) {
 	}
 
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void mouseWheelMoved(MouseWheelEvent e) {
 	}
 	@Override
 	public void stateChanged(ChangeEvent e) {
@@ -265,5 +340,149 @@ public class DialogNewEntry extends JDialog implements ChangeListener, MouseList
 			}
 			this.repaint();
 		}
+	}
+
+	public Application getFrmParent() {
+		return frmParent;
+	}
+
+	public void setFrmParent(Application frmParent) {
+		this.frmParent = frmParent;
+	}
+
+	public JLabel getLblDialogBg() {
+		return lblDialogBg;
+	}
+
+	public void setLblDialogBg(JLabel lblDialogBg) {
+		this.lblDialogBg = lblDialogBg;
+	}
+
+	public JButton getBtnCreate() {
+		return btnCreate;
+	}
+
+	public void setBtnCreate(JButton btnCreate) {
+		this.btnCreate = btnCreate;
+	}
+
+	public JButton getBtnCancel() {
+		return btnCancel;
+	}
+
+	public void setBtnCancel(JButton btnCancel) {
+		this.btnCancel = btnCancel;
+	}
+
+	public JLabel getLblTitle() {
+		return lblTitle;
+	}
+
+	public void setLblTitle(JLabel lblTitle) {
+		this.lblTitle = lblTitle;
+	}
+
+	public JLabel getLblDate() {
+		return lblDate;
+	}
+
+	public void setLblDate(JLabel lblDate) {
+		this.lblDate = lblDate;
+	}
+
+	public JTextArea getTxtDescription() {
+		return txtDescription;
+	}
+
+	public void setTxtDescription(JTextArea txtDescription) {
+		this.txtDescription = txtDescription;
+	}
+
+	public JComboBox<Time> getCmbTimeStart() {
+		return cmbTimeStart;
+	}
+
+	public void setCmbTimeStart(JComboBox<Time> cmbTimeStart) {
+		this.cmbTimeStart = cmbTimeStart;
+	}
+
+	public JComboBox<Time> getCmbTimeEnd() {
+		return cmbTimeEnd;
+	}
+
+	public void setCmbTimeEnd(JComboBox<Time> cmbTimeEnd) {
+		this.cmbTimeEnd = cmbTimeEnd;
+	}
+
+	public ButtonGroup getGrpEventTask() {
+		return grpEventTask;
+	}
+
+	public void setGrpEventTask(ButtonGroup grpEventTask) {
+		this.grpEventTask = grpEventTask;
+	}
+
+	public JRadioButton getRdiEvent() {
+		return rdiEvent;
+	}
+
+	public void setRdiEvent(JRadioButton rdiEvent) {
+		this.rdiEvent = rdiEvent;
+	}
+
+	public JRadioButton getRdiTask() {
+		return rdiTask;
+	}
+
+	public void setRdiTask(JRadioButton rdiTask) {
+		this.rdiTask = rdiTask;
+	}
+
+	public JTextField getTxtTimeStart() {
+		return txtTimeStart;
+	}
+
+	public void setTxtTimeStart(JTextField txtTimeStart) {
+		this.txtTimeStart = txtTimeStart;
+	}
+
+	public JTextField getTxtTimeEnd() {
+		return txtTimeEnd;
+	}
+
+	public void setTxtTimeEnd(JTextField txtTimeEnd) {
+		this.txtTimeEnd = txtTimeEnd;
+	}
+
+	public JTextField getTxtDate() {
+		return txtDate;
+	}
+
+	public void setTxtDate(JTextField txtDate) {
+		this.txtDate = txtDate;
+	}
+
+	public int getCurrentMonth() {
+		return currentMonth;
+	}
+
+	public void setCurrentMonth(int currentMonth) {
+		this.currentMonth = currentMonth;
+	}
+
+	public int getCurrentDay() {
+		return currentDay;
+	}
+
+	public void setCurrentDay(int currentDay) {
+		this.currentDay = currentDay;
+	}
+
+	public int getCurrentYear() {
+		return currentYear;
+	}
+
+	public void setCurrentYear(int currentYear) {
+		this.currentYear = currentYear;
 	}
 }
