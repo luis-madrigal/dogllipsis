@@ -1,16 +1,20 @@
 package com.entry;
 
+import java.awt.Color;
+import java.sql.Time;
+import java.util.Date;
+
+import com.calendar.TimeRange;
+
 public class Task extends Entry{
   
-  public boolean isSelected;
-	
 	private boolean isSelected;
 	
 	public Task(String description, Date dateDue, Time startTime, Time endTime) {
 		this.description = description;
 		this.dateDue = dateDue;
-		this.timeRange.setStartTime(startTime);
-		this.timeRange.setEndTime(endTime);
+		this.timeRange = new TimeRange(startTime, endTime);
+		
 		this.color = Color.GREEN;
 		this.isCompleted = false;
 		this.isSelected = false;
