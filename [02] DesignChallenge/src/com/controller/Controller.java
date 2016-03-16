@@ -1,9 +1,13 @@
 package com.controller;
 
-import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 
+import com.calendar.TimeRange;
+import com.entry.Entry;
 import com.model.Model;
+import com.view.EntryType;
 
 public abstract class Controller {
 	protected ArrayList<Model> models;
@@ -21,6 +25,4 @@ public abstract class Controller {
 	public void setModels(ArrayList<Model> models) {
 		this.models = models;
 	}
-
-
 }
