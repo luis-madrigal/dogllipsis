@@ -17,6 +17,7 @@ import javax.swing.ScrollPaneConstants;
 
 import com.controller.ProductivityToolController;
 import com.entry.Entry;
+import com.entry.EntryFactory;
 import com.entry.Event;
 import com.entry.Task;
 import com.view.DayView;
@@ -26,11 +27,18 @@ import com.view.EntryView;
 public class FrameDay extends Frame implements MouseListener, MouseMotionListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 	
+	
+	
 	private ProductivityToolController controller;
 	private DayView viewDay;
 	private ArrayList<Entry> entries;
 	private ArrayList<String> time;
 	private int indexEntry;
+	private int indexDay;
+	private int indexMonth;
+	private int indexYear;
+	private boolean isSelectedEvent;
+	private boolean isSelectedTask;
 	
 	private JLabel lblFrameMain;	
 	private JLabel lblFrameSide;
@@ -69,11 +77,11 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	private ImageIcon iiSideTask;
 
 	
-	public FrameDay(int width, int height, DayView viewDay, ProductivityToolController controller) {
+	public FrameDay(int width, int height, ProductivityToolController controller) {
 		super(width, height);
 		this.controller = controller;
 		
-		this.viewDay = viewDay;
+		this.viewDay = new DayView();
 		this.initComponents();
 		this.setViewType(EntryType.NONE);
 		// frame
@@ -105,6 +113,12 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	
 	@Override
 	protected void initComponents() {		
+		this.indexYear = 2016;
+		this.indexDay = 0;
+		this.indexMonth = 1;
+		this.isSelectedEvent = true;
+		this.isSelectedTask = true;
+		
 		this.time = new ArrayList<String>();
 		time.add("00:00");
 		time.add("00:30");
@@ -157,8 +171,7 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		time.add("22:30");
 		time.add("23:00");
 		time.add("23:30");
-		time.add("24:00");
-
+		
 		
 		this.entries = new ArrayList<Entry>();
 		System.out.println("Date: "+new Date());
@@ -196,7 +209,7 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		Frame.initLabels(lblFrameMain, "Frame Main DayView", null);		
 		Frame.initLabels(lblFrameSide, "Frame Side DayView", null);
 		
-		Frame.initLabels(lblPosterMainDone, "Poster Done", this);
+		Frame.initLabels(lblPosterMainDone, "Poster Done", null);
 		Frame.initLabels(lblPosterSideLeftDone, "Frame Side Done", null);
 		Frame.initLabels(lblPosterSideRightDone, "Frame Side Done", null);
 		
@@ -240,7 +253,7 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		lblPosterSideLeftDone.setBounds(lblPosterSideLeft.getBounds());
 		lblPosterSideRightDone.setBounds(lblPosterSideRight.getBounds());
 		
-		this.txtDescription = new JTextArea("asdnajsndasndkjabskdbaksjdbkasjbdkjbnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+		this.txtDescription = new JTextArea();
 		txtDescription.setBounds(624, 411, 185, 185);
 		txtDescription.setBackground(Application.Color_TRANS);
 		txtDescription.setForeground(Application.Color_NIGHT);
@@ -280,66 +293,111 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		if(this.indexEntry == 47) {
 			this.lblRightTime.setVisible(false);
 		}
-		
-		this.lblMainTime.setText(this.time.get(indexEntry));
+		if(indexEntry < 48)
+			this.lblMainTime.setText(this.time.get(indexEntry));
 		if((this.indexEntry-1) >= 0) {
-			this.lblLeftTime.setText(""+this.time.get((this.indexEntry-1)));
-		}
-		if((this.indexEntry+1) < 48) {
-			this.lblRightTime.setText(""+this.time.get((this.indexEntry+1)));
+			this.lblLeftTime.setText(""+this.time.get((this.indexEntry-1)));			
 		}
 			
+		if((this.indexEntry+1) < 48) {
+			this.lblRightTime.setText(""+this.time.get((this.indexEntry+1)));
+			
+		}
+		this.setPoster();
+		this.setPosterSide();
 	}
 	
-	public void setPoster(Entry entry) {
-		EntryType type;
-		if(entry instanceof Event) {
-			type = EntryType.EVENT;
+	public void setPoster() {
+		if(this.entries.size() > 0) {
+			Entry entry = this.entries.get(indexEntry);
+			EntryType type;
+			
+			if(entry instanceof Event) {
+				type = EntryType.EVENT;
+			}
+			else if(entry instanceof Task) {
+				type = EntryType.TASK;
+			}
+			else {
+				type = EntryType.NONE;
+			}
+			
+			if(entry != null) {
+				this.lblTimeDue.setText(entry.getTimeRange().getEndTime().toString().substring(0, 5));
+				this.txtDescription.setText(entry.getDescription());
+			}
+			
+			this.setPosterSide();
+			this.setViewType(type);	
 		}
-		else if(entry instanceof Task) {
-			type = EntryType.TASK;
-		}
-		else {
-			type = EntryType.NONE;
-		}
-		this.setViewType(type);	
 	}
 	
-	public void setPosterSide(Entry entryLeft, Entry entryRight) {
-		EntryType type;
-		if(entryLeft instanceof Event) {
-			type = EntryType.EVENT;
+	public void setPosterSide() {
+		if(this.entries.size() > 0) {
+			EntryType type = EntryType.NONE;
+			
+			Entry entryLeft;
+			if(indexEntry-1 < 0) {
+				entryLeft = null;
+			}
+			else {
+				entryLeft = entries.get(indexEntry-1);
+			}
+			
+			Entry entryRight;
+			if(indexEntry+1 > 47) {
+				entryRight = null;
+			}
+			else {
+				entryRight = entries.get(indexEntry+1);
+			}
+			
+			this.lblPosterSideLeftDone.setVisible(false);
+			if(entryLeft == null) {
+				type = EntryType.NONE;
+			}
+			else if(entryLeft instanceof Event) {
+				type = EntryType.EVENT;
+			}
+			else if(entryLeft instanceof Task) {
+				type = EntryType.TASK;
+				if(entryLeft.isCompleted()) {
+					this.lblPosterSideLeftDone.setVisible(true);
+				}
+			}
+			
+			this.setLeftSideViewType(type);	
+			this.lblPosterSideRightDone.setVisible(false);
+			if(entryRight == null) {
+				type = EntryType.NONE;			
+			}
+			else if(entryRight instanceof Event) {
+				type = EntryType.EVENT;
+			}
+			else if(entryRight instanceof Task) {
+				type = EntryType.TASK;
+				if(entryRight.isCompleted()) {
+					this.lblPosterSideRightDone.setVisible(true);
+				}
+			}
+	
+			this.setRightSideViewType(type);	
 		}
-		else if(entryLeft instanceof Task) {
-			type = EntryType.TASK;
-		}
-		else {
-			type = EntryType.NONE;
-		}
-		this.setLeftSideViewType(type);	
-		
-		if(entryRight instanceof Event) {
-			type = EntryType.EVENT;
-		}
-		else if(entryRight instanceof Task) {
-			type = EntryType.TASK;
-		}
-		else {
-			type = EntryType.NONE;
-		}
-		this.setRightSideViewType(type);			
 	}
 	
 	public void setRightSideViewType(EntryType type) {
 		switch(type) {
 			case TASK:				
-				this.lblPosterSideLeft.setIcon(iiSideTask);
+				this.lblPosterSideRight.setIcon(iiSideTask);
+				
 				break;
 			case EVENT:
-				this.lblPosterSideLeft.setIcon(iiSideEvent);
+				this.lblPosterSideRight.setIcon(iiSideEvent);
+				
 				break;
 			case NONE:
-				this.lblPosterSideLeft.setIcon(iiSideNone);
+				this.lblPosterSideRight.setIcon(iiSideNone);
+				
 				break;
 		}
 	}
@@ -347,13 +405,15 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	public void setLeftSideViewType(EntryType type) {
 		switch(type) {
 			case TASK:				
-				this.lblPosterSideRight.setIcon(iiSideTask);
+				this.lblPosterSideLeft.setIcon(iiSideTask);
+				
 				break;
 			case EVENT:
-				this.lblPosterSideRight.setIcon(iiSideEvent);
+				this.lblPosterSideLeft.setIcon(iiSideEvent);
+				
 				break;
 			case NONE:
-				this.lblPosterSideRight.setIcon(iiSideNone);
+				this.lblPosterSideLeft.setIcon(iiSideNone);
 				break;
 		}
 	}
@@ -363,6 +423,7 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	  labels in the gui.
 	*/
 	public void setViewType(EntryType type) {
+		this.lblPosterMainDone.setVisible(false);
 		switch(type) {
 			case TASK:
 				this.lblTimeDue.setVisible(true);
@@ -370,13 +431,18 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 				this.scrlDescription.setVisible(true);
 				
 				this.lblPosterMain.setIcon(iiMainTask);
+				Entry entry = this.entries.get(indexEntry);
+				if(entry.isCompleted()) {
+					this.lblPosterMainDone.setVisible(true);
+				}
 				break;
 			case EVENT:
 				this.lblTimeDue.setVisible(true);
 				this.lblEntryNum.setVisible(true);
-				this.scrlDescription.setVisible(true);
-				
+				this.scrlDescription.setVisible(true);				
 				this.lblPosterMain.setIcon(iiMainEvent);
+				
+			
 				break;
 			case NONE:
 				this.lblTimeDue.setVisible(false);
@@ -402,10 +468,41 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 	}
 	@Override
 	public void refresh() {
-		this.entries = this.controller.getEntries(new Date());
+		this.refresh(this.indexMonth, this.indexDay, this.indexYear);		
+	}
+	public void refresh(int month, int day, int year) {
+		System.out.println("month: "+month+"   day: "+day+"   year"+year);
+		this.indexDay = day;
+		this.indexMonth = month;
+		this.indexYear = year;
+		
+		Date date = new Date(year-1900, month, day);
+		
+		if(isSelectedEvent && isSelectedTask) {
+			this.entries = this.controller.getEntries(date);
+			System.out.println("Bot");
+		}
+		else if(isSelectedEvent) {
+			this.entries = this.controller.getEntries(date, EntryType.EVENT);
+			System.out.println("Event");
+		}
+		else if(isSelectedTask) {
+			this.entries = this.controller.getEntries(date, EntryType.TASK);
+			System.out.println("Task");
+		}
+		else {
+			this.entries = this.controller.getEntries(date, EntryType.NONE);
+		}
+		
+		for(int i = 0; i < this.entries.size(); i++) {
+			if(this.entries.get(i) != null)
+			System.out.println("i = "+i+"    entry: "+entries.get(i));
+		}
+		
+		
+		this.setPoster();
 		
 	}
-	
 	public void next() {
 		this.setIndexEntry(this.indexEntry+1);
 	}
@@ -414,14 +511,45 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		this.setIndexEntry(this.indexEntry-1);
 	}
 	
+	public void remove() {
+		this.controller.removeEntries(entries.get(indexEntry));
+		this.refresh();
+	}
+	
+	public void markPoster() {
+		if(this.entries.size() > 0) {
+			Date date = new Date(this.indexYear-1900, this.indexMonth, this.indexDay);
+			Entry entry = entries.get(indexEntry);		
+			
+			if(entries.get(indexEntry) instanceof Task) {
+				System.out.println("task");
+				int indexStart = Application.getTimeIndex(entry.getTimeRange().getStartTime());
+				int indexEnd = Application.getTimeIndex(entry.getTimeRange().getEndTime());
+				int index = this.controller.getEntries(date).indexOf(entry);
+				for(int i = indexStart; i < indexEnd; i++) {
+					this.controller.getEntries(date).get(i).setCompleted(!this.controller.getEntries(date).get(i).isCompleted());
+					System.out.println("Completed: "+this.controller.getEntries(date).get(i).isCompleted());
+				}
+			}
+	//		this.entries = this.controller.getEntries(date);
+			this.refresh();
+		}
+	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if(e.getSource() == this.lblPosterMain) {
+			this.markPoster();
+			System.out.println("Poster Main");
+		}
 		if(e.getSource() == this.lblPosterSideLeft) {
 			this.prev();
 		}
 		if(e.getSource() == this.lblPosterSideRight) {
 			this.next();
+		}
+		if(e.getSource() == this.btnRemove) {
+			this.remove();
 		}
 	}
 
@@ -511,5 +639,271 @@ public class FrameDay extends Frame implements MouseListener, MouseMotionListene
 		}
 		this.indexEntry = indexEntry;
 		this.setTime();
-	}	
+	}
+
+	public boolean isSelectedEvent() {
+		return isSelectedEvent;
+	}
+
+	public void setSelectedEvent(boolean isSelectedEvent) {
+		this.isSelectedEvent = isSelectedEvent;
+		this.refresh();
+	}
+
+	public boolean isSelectedTask() {
+		return isSelectedTask;
+	}
+
+	public void setSelectedTask(boolean isSelectedTask) {
+		this.isSelectedTask = isSelectedTask;
+		this.refresh();
+	}
+
+	public ProductivityToolController getController() {
+		return controller;
+	}
+
+	public void setController(ProductivityToolController controller) {
+		this.controller = controller;
+	}
+
+	public ArrayList<String> getTime() {
+		return time;
+	}
+
+	public void setTime(ArrayList<String> time) {
+		this.time = time;
+	}
+
+	public int getIndexDay() {
+		return indexDay;
+	}
+
+	public void setIndexDay(int indexDay) {
+		this.indexDay = indexDay;
+	}
+
+	public int getIndexMonth() {
+		return indexMonth;
+	}
+
+	public void setIndexMonth(int indexMonth) {
+		this.indexMonth = indexMonth;
+	}
+
+	public int getIndexYear() {
+		return indexYear;
+	}
+
+	public void setIndexYear(int indexYear) {
+		this.indexYear = indexYear;
+	}
+
+	public JLabel getLblFrameMain() {
+		return lblFrameMain;
+	}
+
+	public void setLblFrameMain(JLabel lblFrameMain) {
+		this.lblFrameMain = lblFrameMain;
+	}
+
+	public JLabel getLblFrameSide() {
+		return lblFrameSide;
+	}
+
+	public void setLblFrameSide(JLabel lblFrameSide) {
+		this.lblFrameSide = lblFrameSide;
+	}
+
+	public JLabel getLblPosterMainDone() {
+		return lblPosterMainDone;
+	}
+
+	public void setLblPosterMainDone(JLabel lblPosterMainDone) {
+		this.lblPosterMainDone = lblPosterMainDone;
+	}
+
+	public JLabel getLblPosterSideLeftDone() {
+		return lblPosterSideLeftDone;
+	}
+
+	public void setLblPosterSideLeftDone(JLabel lblPosterSideLeftDone) {
+		this.lblPosterSideLeftDone = lblPosterSideLeftDone;
+	}
+
+	public JLabel getLblPosterSideRightDone() {
+		return lblPosterSideRightDone;
+	}
+
+	public void setLblPosterSideRightDone(JLabel lblPosterSideRightDone) {
+		this.lblPosterSideRightDone = lblPosterSideRightDone;
+	}
+
+	public JLabel getLblPosterSideLeft() {
+		return lblPosterSideLeft;
+	}
+
+	public void setLblPosterSideLeft(JLabel lblPosterSideLeft) {
+		this.lblPosterSideLeft = lblPosterSideLeft;
+	}
+
+	public JLabel getLblPosterSideRight() {
+		return lblPosterSideRight;
+	}
+
+	public void setLblPosterSideRight(JLabel lblPosterSideRight) {
+		this.lblPosterSideRight = lblPosterSideRight;
+	}
+
+	public JLabel getLblPosterMain() {
+		return lblPosterMain;
+	}
+
+	public void setLblPosterMain(JLabel lblPosterMain) {
+		this.lblPosterMain = lblPosterMain;
+	}
+
+	public JButton getBtnRemove() {
+		return btnRemove;
+	}
+
+	public void setBtnRemove(JButton btnRemove) {
+		this.btnRemove = btnRemove;
+	}
+
+	public JLabel getLblLeftTime() {
+		return lblLeftTime;
+	}
+
+	public void setLblLeftTime(JLabel lblLeftTime) {
+		this.lblLeftTime = lblLeftTime;
+	}
+
+	public JLabel getLblMainTime() {
+		return lblMainTime;
+	}
+
+	public void setLblMainTime(JLabel lblMainTime) {
+		this.lblMainTime = lblMainTime;
+	}
+
+	public JLabel getLblRightTime() {
+		return lblRightTime;
+	}
+
+	public void setLblRightTime(JLabel lblRightTime) {
+		this.lblRightTime = lblRightTime;
+	}
+
+	public JLabel getLblTimeDue() {
+		return lblTimeDue;
+	}
+
+	public void setLblTimeDue(JLabel lblTimeDue) {
+		this.lblTimeDue = lblTimeDue;
+	}
+
+	public JLabel getLblEntryNum() {
+		return lblEntryNum;
+	}
+
+	public void setLblEntryNum(JLabel lblEntryNum) {
+		this.lblEntryNum = lblEntryNum;
+	}
+
+	public JTextArea getTxtDescription() {
+		return txtDescription;
+	}
+
+	public void setTxtDescription(JTextArea txtDescription) {
+		this.txtDescription = txtDescription;
+	}
+
+	public JScrollPane getScrlDescription() {
+		return scrlDescription;
+	}
+
+	public void setScrlDescription(JScrollPane scrlDescription) {
+		this.scrlDescription = scrlDescription;
+	}
+
+	public ImageIcon getIiDoneHead() {
+		return iiDoneHead;
+	}
+
+	public void setIiDoneHead(ImageIcon iiDoneHead) {
+		this.iiDoneHead = iiDoneHead;
+	}
+
+	public ImageIcon getIiDoneTail() {
+		return iiDoneTail;
+	}
+
+	public void setIiDoneTail(ImageIcon iiDoneTail) {
+		this.iiDoneTail = iiDoneTail;
+	}
+
+	public ImageIcon getIiMainNone() {
+		return iiMainNone;
+	}
+
+	public void setIiMainNone(ImageIcon iiMainNone) {
+		this.iiMainNone = iiMainNone;
+	}
+
+	public ImageIcon getIiSideNone() {
+		return iiSideNone;
+	}
+
+	public void setIiSideNone(ImageIcon iiSideNone) {
+		this.iiSideNone = iiSideNone;
+	}
+
+	public ImageIcon getIiMainEvent() {
+		return iiMainEvent;
+	}
+
+	public void setIiMainEvent(ImageIcon iiMainEvent) {
+		this.iiMainEvent = iiMainEvent;
+	}
+
+	public ImageIcon getIiMainEventTail() {
+		return iiMainEventTail;
+	}
+
+	public void setIiMainEventTail(ImageIcon iiMainEventTail) {
+		this.iiMainEventTail = iiMainEventTail;
+	}
+
+	public ImageIcon getIiSideEvent() {
+		return iiSideEvent;
+	}
+
+	public void setIiSideEvent(ImageIcon iiSideEvent) {
+		this.iiSideEvent = iiSideEvent;
+	}
+
+	public ImageIcon getIiMainTask() {
+		return iiMainTask;
+	}
+
+	public void setIiMainTask(ImageIcon iiMainTask) {
+		this.iiMainTask = iiMainTask;
+	}
+
+	public ImageIcon getIiMainTaskTail() {
+		return iiMainTaskTail;
+	}
+
+	public void setIiMainTaskTail(ImageIcon iiMainTaskTail) {
+		this.iiMainTaskTail = iiMainTaskTail;
+	}
+
+	public ImageIcon getIiSideTask() {
+		return iiSideTask;
+	}
+
+	public void setIiSideTask(ImageIcon iiSideTask) {
+		this.iiSideTask = iiSideTask;
+	}
 }
