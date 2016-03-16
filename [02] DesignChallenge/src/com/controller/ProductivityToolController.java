@@ -24,30 +24,23 @@ public class ProductivityToolController extends Controller{
 
 	@Override
 	public ArrayList<Entry> getEntries(Date date, EntryType type) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.models.get(0).getEntries(date, type);
 	}
 
 	@Override
 	public void addEntries(EntryType type, String description, Date dateDue, Time startTime, Time endTime) {
-		// TODO Auto-generated method stub
 		this.models.get(0).addEntries(type, description, dateDue, startTime, endTime);
-		//TODO: Renew view
-		
 	}
 
 	@Override
 	public boolean isValidEntry(Date date, TimeRange timeRange) {
-		// TODO Auto-generated method stub
-		return false;
+		return this.models.get(0).isValidEntry(date, timeRange);
 	}
 
 	@Override
 	public void removeEntries(Entry entry) {
-		// TODO Auto-generated method stub
-		this.models.remove(entry);
-		// TODO Renew view
+		this.models.get(0).removeEntries(entry);	
 	}
 
 }
-
