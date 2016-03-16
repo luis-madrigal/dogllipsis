@@ -14,19 +14,26 @@ public class ExportCsv extends ExportFile
 			FileWriter writer = new FileWriter(sFileName+".csv");
 			
 			for(int i = 0; i < entries.size(); i++) {
-				writer.append(String.valueOf(entries.get(i).getTimeRange().getStartTime().getTime()));
-				writer.append(",");
-				writer.append(String.valueOf(entries.get(i).getTimeRange().getEndTime().getTime()));
-				writer.append(",");
-				writer.append(entries.get(i).getDescription());
-				writer.append(",");
-				writer.append(String.valueOf(entries.get(i).getColor().getRGB()));
-				writer.append(",");
-				writer.append(String.valueOf(entries.get(i).isCompleted()));
-				writer.append(",");
-				writer.append(String.valueOf(entries.get(i).getDateDue().getTime()));
-				writer.append(System.getProperty("line.separator"));
+				if(entries.get(i) != null) {
+					writer.append(String.valueOf(entries.get(i).getTimeRange().getStartTime().getTime()));
+					writer.append(",");
+					writer.append(String.valueOf(entries.get(i).getTimeRange().getEndTime().getTime()));
+					writer.append(",");
+					writer.append(entries.get(i).getDescription());
+					writer.append(",");
+					writer.append(String.valueOf(entries.get(i).getColor().getRGB()));
+					writer.append(",");
+					writer.append(String.valueOf(entries.get(i).isCompleted()));
+					writer.append(",");
+					writer.append(String.valueOf(entries.get(i).getDateDue().getTime()));
+					writer.append(System.getProperty("line.separator"));
+				}
+//				else {
+//					writer.append("null");
+//					writer.append(System.getProperty("line.separator"));
+//				}
 			}
+				
 			
 		    writer.flush();
 		    writer.close();
