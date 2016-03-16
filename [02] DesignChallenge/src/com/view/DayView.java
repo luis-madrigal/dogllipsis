@@ -1,29 +1,37 @@
 package com.view;
 
+import java.util.ArrayList;
+
+import com.controller.ProductivityToolController;
+import com.entry.Entry;
+
 public class DayView extends EntryView {
 
+	public DayView(ProductivityToolController controller) {
+		this.entries = new ArrayList<Entry>();
+		this.type = new EntryType[48];
+		this.controller = controller;
+		
+	}
+	
 	@Override
 	public void viewTasks() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void viewEvents() {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override
 	public void viewAll() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void viewNone() {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 }
