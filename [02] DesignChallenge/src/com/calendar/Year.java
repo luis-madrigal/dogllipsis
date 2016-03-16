@@ -1,51 +1,31 @@
 package com.calendar;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
-
-public class Month {
+public class Year {
 	
-	private ArrayList<Day> days;
-	private int month;
-	private int startOfMonth;
-	private int endOfMonth;
+	private ArrayList<Month> months;
+	private int year;
 	
-	public Month(int month, int year) {
-		this.month = month;
-		this.days = new ArrayList<Day>();
-		GregorianCalendar days = new GregorianCalendar(year, month, 1);
-		this.startOfMonth = days.get(GregorianCalendar.DAY_OF_WEEK);
-		this.endOfMonth = days.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
-		for(int i = 1; i <= this.endOfMonth; i++) {
-			this.days.add(new Day(i));
+	public Year(int year) {
+		this.year = year;
+		this.months = new ArrayList<Month>();
+		for(int i = 0; i < 12; i++){
+			this.months.add(new Month(i, year));
 		}
+		
 	}
 	
-	public ArrayList<Day> getDays() {
-		return days;
+	public ArrayList<Month> getMonths() {
+		return months;
 	}
-	public void setDays(ArrayList<Day> days) {
-		this.days = days;
+	public void setMonths(ArrayList<Month> months) {
+		this.months = months;
 	}
-	public int getMonth() {
-		return month;
+	public int getYear() {
+		return year;
 	}
-	public void setMonth(int month) {
-		this.month = month;
+	public void setYear(int year) {
+		this.year = year;
 	}
-	public int getStartOfMonth() {
-		return startOfMonth;
-	}
-	public void setStartOfMonth(int startOfMonth) {
-		this.startOfMonth = startOfMonth;
-	}
-	public int getEndOfMonth() {
-		return endOfMonth;
-	}
-	public void setEndOfMonth(int endOfMonth) {
-		this.endOfMonth = endOfMonth;
-	}
-
-
 }
