@@ -281,6 +281,7 @@ public class Application extends JFrame implements MouseListener, MouseMotionLis
 	public void toggleViewTask() {
 		this.isSelectedTask = !this.isSelectedTask;
 		this.pnlDay.setSelectedTask(isSelectedTask);
+		this.pnlAgenda.setSelectedTask(isSelectedTask);
 		
 		if(this.isSelectedTask == true) {
 			this.btnViewTasks.setIcon(btnViewTasks.getRolloverIcon());
@@ -290,11 +291,12 @@ public class Application extends JFrame implements MouseListener, MouseMotionLis
 		}
 	}
 	
-	// TODO add agenda
+	
 	public void toggleViewEvent() {
 		this.isSelectedEvent = !this.isSelectedEvent;
 		this.pnlDay.setSelectedEvent(isSelectedEvent);
-			
+		this.pnlAgenda.setSelectedEvent(isSelectedEvent);
+		
 		if(this.isSelectedEvent == true) {
 			this.btnViewEvents.setIcon(btnViewEvents.getRolloverIcon());
 			
@@ -310,7 +312,7 @@ public class Application extends JFrame implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == this.btnNewEntry) {
-			this.dlgNewEntry.open(pnlCalendar.getCurrentMonth(), pnlCalendar.getCurrentDay(), pnlCalendar.getCurrentYear());
+			this.dlgNewEntry.open(pnlCalendar.getCurrentMonth(), pnlCalendar.getCurrentDay(), pnlCalendar.getCurrentYear(), pnlDay.getIndexEntry());
 		}
 		
 		if(e.getSource() == this.btnDayView) {
