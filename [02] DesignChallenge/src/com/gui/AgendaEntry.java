@@ -10,11 +10,11 @@ public class AgendaEntry extends JPanel{
 	private JCheckBox cbStatus;
 	private int y;
 	
-	public AgendaEntry(String startTime, String endTime, JCheckBox entry){
+	public AgendaEntry(Entry entry, int entryIndex, JCheckBox status){
 		
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.cbStatus = entry;
+		this.startTime = entry.getTimeRange().getStartTime().toString();
+		this.endTime = entry.getTimeRange().getEndTime().toString();
+		this.cbStatus = status;
 		this.y = 0;
 	}
 
