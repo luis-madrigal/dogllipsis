@@ -1,5 +1,10 @@
 package com.entry;
 
+import java.sql.Time;
+import java.util.Date;
+
+import com.view.EntryType;
+
 public abstract class EntryFactory {
 	
 	public static Entry createEntry(EntryType type, String description, Date dateDue, Time startTime, Time endTime) {
